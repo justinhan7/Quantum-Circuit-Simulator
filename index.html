@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quantum Circuit Simulator</title>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/reset.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/toolbar.css" />
+  <link rel="stylesheet" href="css/sidebar.css" />
+  <link rel="stylesheet" href="css/canvas.css" />
+  <link rel="stylesheet" href="css/scope.css" />
+  <link rel="stylesheet" href="css/modal.css" />
+  <link rel="stylesheet" href="css/statusbar.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- ── Toolbar ── -->
+    <header id="toolbar">
+      <span id="app-title">⚛ Quantum Circuit Sim</span>
+
+      <div id="tool-buttons">
+        <button class="comp-btn selected" data-type="wire" title="Wire (W)">
+          <svg width="14" height="14" viewBox="0 0 14 14"><line x1="1" y1="7" x2="13" y2="7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Wire
+        </button>
+        <button class="comp-btn" data-type="resistor" title="Resistor (R to rotate)">
+          <svg width="14" height="14" viewBox="0 0 14 14"><rect x="3" y="4" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.2" fill="none"/><line x1="0" y1="7" x2="3" y2="7" stroke="currentColor" stroke-width="1.2"/><line x1="11" y1="7" x2="14" y2="7" stroke="currentColor" stroke-width="1.2"/></svg>
+          Resistor
+        </button>
+        <button class="comp-btn" data-type="capacitor">
+          <svg width="14" height="14" viewBox="0 0 14 14"><line x1="0" y1="7" x2="5" y2="7" stroke="currentColor" stroke-width="1.2"/><line x1="5" y1="2" x2="5" y2="12" stroke="currentColor" stroke-width="1.8"/><line x1="9" y1="2" x2="9" y2="12" stroke="currentColor" stroke-width="1.8"/><line x1="9" y1="7" x2="14" y2="7" stroke="currentColor" stroke-width="1.2"/></svg>
+          Capacitor
+        </button>
+        <button class="comp-btn" data-type="inductor">
+          <svg width="14" height="14" viewBox="0 0 14 14"><path d="M0,7 Q1.5,3 3,7 Q4.5,11 6,7 Q7.5,3 9,7 Q10.5,11 12,7 L14,7" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+          Inductor
+        </button>
+        <button class="comp-btn" data-type="vsource">
+          <svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.2" fill="none"/><text x="7" y="10" text-anchor="middle" font-size="7" fill="currentColor">+</text><line x1="0" y1="7" x2="2" y2="7" stroke="currentColor" stroke-width="1.2"/><line x1="12" y1="7" x2="14" y2="7" stroke="currentColor" stroke-width="1.2"/></svg>
+          V Source
+        </button>
+        <button class="comp-btn" data-type="led">
+          <svg width="14" height="14" viewBox="0 0 14 14"><polygon points="3,3 3,11 10,7" stroke="currentColor" stroke-width="1.2" fill="none"/><line x1="10" y1="3" x2="10" y2="11" stroke="currentColor" stroke-width="1.8"/><line x1="0" y1="7" x2="3" y2="7" stroke="currentColor" stroke-width="1.2"/><line x1="10" y1="7" x2="14" y2="7" stroke="currentColor" stroke-width="1.2"/></svg>
+          LED
+        </button>
+        <button class="comp-btn" data-type="switch">
+          <svg width="14" height="14" viewBox="0 0 14 14"><line x1="0" y1="7" x2="4" y2="7" stroke="currentColor" stroke-width="1.2"/><line x1="10" y1="7" x2="14" y2="7" stroke="currentColor" stroke-width="1.2"/><circle cx="4" cy="7" r="1.5" fill="currentColor"/><circle cx="10" cy="7" r="1.5" fill="currentColor"/><line x1="4" y1="7" x2="10" y2="3.5" stroke="currentColor" stroke-width="1.2"/></svg>
+          Switch
+        </button>
+        <button class="comp-btn" data-type="ground">
+          <svg width="14" height="14" viewBox="0 0 14 14"><line x1="7" y1="1" x2="7" y2="7" stroke="currentColor" stroke-width="1.2"/><line x1="2" y1="7" x2="12" y2="7" stroke="currentColor" stroke-width="1.8"/><line x1="4" y1="10" x2="10" y2="10" stroke="currentColor" stroke-width="1.4"/><line x1="6" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="1.2"/></svg>
+          Ground
+        </button>
+
+        <div class="tool-sep"></div>
+
+        <button class="comp-btn" data-type="select" id="btn-select">
+          <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2,2 L2,11 L5,8 L7,13 L9,12 L7,7 L11,7 Z" stroke="currentColor" stroke-width="1" fill="none"/></svg>
+          Select
+        </button>
+
+        <div class="tool-sep"></div>
+
+        <button id="scope-toggle-btn" class="scope-btn">
+          <svg width="14" height="14" viewBox="0 0 14 14"><rect x="1" y="3" width="12" height="8" rx="1" stroke="currentColor" stroke-width="1.2" fill="none"/><polyline points="2,9 4,6 6,8 8,4 10,7 12,5" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+          Scope
+        </button>
+      </div>
+    </header>
+
+    <div id="instructions-bar">
+      Hover to preview · Click to place · <strong>R</strong> rotate · <strong>Esc</strong> select · <strong>Double-click</strong> to edit value · <strong>Delete</strong> to remove
+    </div>
+
+    <!-- ── Main layout ── -->
+    <div id="main">
+
+      <!-- Sidebar -->
+      <aside id="sidebar">
+        <section class="sidebar-section">
+          <h3 class="sidebar-heading">Properties</h3>
+          <div id="props-panel">
+            <span class="no-selection">Select a component</span>
+          </div>
+        </section>
+
+        <section class="sidebar-section">
+          <h3 class="sidebar-heading">Quantum noise</h3>
+          <div id="noise-panel">
+            <input type="range" id="noise-slider" min="0" max="100" value="30" />
+            <div class="noise-labels">
+              <span>0%</span><span id="noise-val">30%</span><span>100%</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="sidebar-section">
+          <h3 class="sidebar-heading">Entropy buffer</h3>
+          <div class="entropy-source">CURBy quantum source</div>
+          <div id="entropy-bar"><div id="entropy-fill"></div></div>
+          <div id="entropy-status">Idle</div>
+        </section>
+
+        <section class="sidebar-section">
+          <h3 class="sidebar-heading">Sim log</h3>
+          <div id="sim-log"></div>
+        </section>
+      </aside>
+
+      <!-- Canvas area + inline scope -->
+      <div id="canvas-area">
+        <div id="canvas-wrap">
+          <canvas id="grid-canvas"></canvas>
+          <canvas id="sim-canvas"></canvas>
+        </div>
+
+        <!-- Inline oscilloscope (slides up from bottom) -->
+        <div id="inline-scope">
+          <div id="scope-header">
+            <svg width="14" height="14" viewBox="0 0 14 14"><rect x="1" y="3" width="12" height="8" rx="1" stroke="currentColor" stroke-width="1.2" fill="none"/><polyline points="2,9 4,6 6,8 8,4 10,7 12,5" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+            <span>Oscilloscope</span>
+            <button class="sc-btn" id="probe-a-btn">Place Probe A</button>
+            <button class="sc-btn" id="probe-b-btn">Place Probe B</button>
+            <button class="sc-btn" id="scope-pause-btn">Pause</button>
+            <span class="scope-meta">500 Sa/s · Ch1 = A−B</span>
+          </div>
+          <div id="probe-strip">
+            <div id="probe-a-badge" class="probe-badge">
+              <svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3.5" fill="#7ab8f5"/></svg>
+              Probe A: <span id="probe-a-loc">—</span>
+            </div>
+            <div id="probe-b-badge" class="probe-badge">
+              <svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3.5" fill="#f5a855"/></svg>
+              Probe B: <span id="probe-b-loc">—</span>
+            </div>
+          </div>
+          <div id="scope-body">
+            <canvas id="scope-canvas"></canvas>
+            <div id="scope-stats">
+              <div class="sstat"><span class="sstat-label">Ch1 (A−B)</span><span class="sstat-val" id="stat-ch1" style="color:#4de84d">—</span></div>
+              <div class="sstat"><span class="sstat-label">Vpp</span><span class="sstat-val" id="stat-vpp">—</span></div>
+              <div class="sstat"><span class="sstat-label">Vmin</span><span class="sstat-val" id="stat-vmin">—</span></div>
+              <div class="sstat"><span class="sstat-label">Vmax</span><span class="sstat-val" id="stat-vmax">—</span></div>
+              <div class="sstat"><span class="sstat-label">Samples</span><span class="sstat-val" id="stat-samples">0</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Status bar ── -->
+    <footer id="status-bar">
+      <div class="stat-chip">
+        <span class="dot" id="sim-dot"></span>
+        <span id="sim-label">Stopped</span>
+      </div>
+      <div class="stat-chip">Components: <strong id="comp-count">0</strong></div>
+      <button id="delete-btn">Delete selected</button>
+      <button id="run-btn">Run simulation</button>
+    </footer>
+
+  </div><!-- #app -->
+
+  <!-- ── Value editor modal ── -->
+  <div id="val-modal-bg" aria-hidden="true">
+    <div id="val-modal" role="dialog" aria-labelledby="val-modal-title">
+      <h3 id="val-modal-title">Edit value</h3>
+      <div class="val-row">
+        <input type="number" id="val-input" step="any" min="0" />
+        <select id="prefix-select">
+          <option value="1e-9">n  (nano,  10⁻⁹)</option>
+          <option value="1e-6">µ  (micro, 10⁻⁶)</option>
+          <option value="1e-3">m  (milli, 10⁻³)</option>
+          <option value="1" selected>—  (base,  ×1)</option>
+          <option value="1e3">k  (kilo,  10³)</option>
+          <option value="1e6">M  (mega,  10⁶)</option>
+          <option value="1e9">G  (giga,  10⁹)</option>
+        </select>
+        <span id="val-unit">Ω</span>
+      </div>
+      <div class="val-prefixes" id="val-prefixes"></div>
+      <div class="val-computed" id="val-computed">= 1 Ω</div>
+      <div class="val-btns">
+        <button class="val-btn" id="val-cancel">Cancel</button>
+        <button class="val-btn primary" id="val-ok">Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Scripts (Models → Views → Controllers → App) ── -->
+  <script src="js/models/Constants.js"></script>
+  <script src="js/models/Component.js"></script>
+  <script src="js/models/CircuitModel.js"></script>
+  <script src="js/models/ScopeModel.js"></script>
+  <script src="js/models/EntropyModel.js"></script>
+  <script src="js/views/GridView.js"></script>
+  <script src="js/views/ComponentView.js"></script>
+  <script src="js/views/ProbeView.js"></script>
+  <script src="js/views/ScopeView.js"></script>
+  <script src="js/views/SidebarView.js"></script>
+  <script src="js/views/ModalView.js"></script>
+  <script src="js/controllers/ToolController.js"></script>
+  <script src="js/controllers/CanvasController.js"></script>
+  <script src="js/controllers/ScopeController.js"></script>
+  <script src="js/controllers/SimulationController.js"></script>
+  <script src="js/controllers/ModalController.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
