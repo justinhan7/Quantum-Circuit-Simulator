@@ -1,0 +1,133 @@
+/* modal.css — value editor dialog */
+
+#val-modal-bg {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+#val-modal-bg.show {
+  display: flex;
+}
+
+#val-modal {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 20px;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+#val-modal h3 {
+  font-size: 14px;
+  font-weight: 500;
+  color: #ddd;
+}
+
+.val-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+#val-input {
+  flex: 1;
+  padding: 7px 10px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  font-size: 14px;
+  background: #111;
+  color: #eee;
+}
+
+#val-input:focus {
+  outline: none;
+  border-color: #4a80c0;
+}
+
+#prefix-select {
+  padding: 7px 8px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  font-size: 12px;
+  background: #111;
+  color: #eee;
+  cursor: pointer;
+}
+
+#val-unit {
+  font-size: 13px;
+  color: #666;
+  min-width: 22px;
+}
+
+/* Quick-pick prefix buttons */
+.val-prefixes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.px-btn {
+  padding: 3px 10px;
+  border: 1px solid #333;
+  border-radius: 5px;
+  font-size: 11px;
+  background: #222;
+  color: #aaa;
+  transition: background 0.12s;
+}
+
+.px-btn:hover,
+.px-btn.active {
+  background: #1a3050;
+  color: #7ab8f5;
+  border-color: #4a80c0;
+}
+
+/* Computed result preview */
+.val-computed {
+  font-size: 12px;
+  color: #888;
+  padding: 5px 10px;
+  background: #111;
+  border-radius: 5px;
+  border: 1px solid #222;
+}
+
+/* Action buttons */
+.val-btns {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.val-btn {
+  padding: 7px 18px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  font-size: 12px;
+  background: #1e1e1e;
+  color: #ccc;
+}
+
+.val-btn:hover {
+  background: #2a2a2a;
+}
+
+.val-btn.primary {
+  background: #1a3050;
+  color: #7ab8f5;
+  border-color: #4a80c0;
+}
+
+.val-btn.primary:hover {
+  background: #1e3a60;
+}

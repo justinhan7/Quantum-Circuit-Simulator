@@ -1,0 +1,29 @@
+/* reset.css — baseline normalisation */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  background: #111;
+  color: #ddd;
+  overflow: hidden;
+}
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+}
+
+input[type="range"] {
+  accent-color: #4a80c0;
+}
+
+canvas {
+  display: block;
+}

@@ -1,0 +1,151 @@
+/* scope.css — inline oscilloscope panel */
+
+#inline-scope {
+  flex-shrink: 0;
+  height: 0;
+  overflow: hidden;
+  transition: height 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid #2a2a2a;
+  background: #111;
+}
+
+#inline-scope.open {
+  height: 220px;
+}
+
+/* Header row */
+#scope-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  background: #161616;
+  border-bottom: 1px solid #2a2a2a;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+#scope-header span {
+  font-size: 12px;
+  font-weight: 500;
+  color: #ccc;
+}
+
+.scope-meta {
+  margin-left: auto;
+  font-size: 11px;
+  color: #444;
+}
+
+/* Probe strip */
+#probe-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 12px;
+  border-bottom: 1px solid #1e1e1e;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.probe-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 5px;
+  border: 1px solid #2a2a2a;
+  background: #1a1a1a;
+  color: #555;
+}
+
+.probe-badge.placed-a {
+  background: #1a3a5c;
+  color: #7ab8f5;
+  border-color: #7ab8f5;
+}
+
+.probe-badge.placed-b {
+  background: #2a1a10;
+  color: #f5a855;
+  border-color: #f5a855;
+}
+
+/* Scope body: canvas + stats sidebar */
+#scope-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+#scope-canvas {
+  flex: 1;
+  display: block;
+  background: #0a0e14;
+}
+
+#scope-stats {
+  width: 115px;
+  flex-shrink: 0;
+  border-left: 1px solid #222;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #141414;
+  overflow-y: auto;
+}
+
+.sstat {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #1e1e1e;
+}
+
+.sstat:last-child {
+  border-bottom: none;
+}
+
+.sstat-label {
+  font-size: 10px;
+  color: #555;
+}
+
+.sstat-val {
+  font-size: 12px;
+  font-weight: 500;
+  color: #ccc;
+}
+
+/* Scope control buttons */
+.sc-btn {
+  padding: 3px 10px;
+  border: 1px solid #333;
+  border-radius: 5px;
+  background: #1e1e1e;
+  color: #ccc;
+  font-size: 11px;
+  transition: background 0.12s;
+}
+
+.sc-btn:hover {
+  background: #2a2a2a;
+}
+
+.sc-btn.active-probe {
+  border-color: #c05020;
+  color: #e07040;
+  background: #2a1a10;
+}
+
+.sc-btn.paused {
+  background: #2a2010;
+  color: #c8a030;
+  border-color: #806020;
+}

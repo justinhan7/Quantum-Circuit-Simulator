@@ -1,0 +1,17 @@
+/* canvas.css — circuit canvas cursor states */
+
+#sim-canvas {
+  cursor: crosshair;
+}
+
+#sim-canvas.select-mode {
+  cursor: default;
+}
+
+#sim-canvas.switch-hover {
+  cursor: pointer;
+}
+
+#sim-canvas.probe-mode {
+  cursor: crosshair;
+}
