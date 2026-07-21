@@ -12,7 +12,41 @@
 }
 
 #inline-scope.open {
-  height: 220px;
+  height: 240px;
+}
+
+/* Zoom control cluster */
+.scope-zoom {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.zoom-label {
+  font-size: 10px !important;
+  color: #666 !important;
+  font-weight: 400 !important;
+}
+
+.zoom-btn {
+  padding: 3px 7px;
+  min-width: 22px;
+  font-family: monospace;
+}
+
+.zoom-readout {
+  font-size: 11px !important;
+  font-family: monospace;
+  color: #8fbc8f !important;
+  min-width: 46px;
+  text-align: center;
+  font-weight: 400 !important;
+}
+
+.probe-hint {
+  margin-left: auto;
+  font-size: 10px;
+  color: #444;
 }
 
 /* Header row */

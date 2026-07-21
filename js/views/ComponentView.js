@@ -12,13 +12,19 @@ class ComponentView {
   }
 
   resize(width, height) {
-    this.canvas.width  = width;
-    this.canvas.height = height;
+    const dpr = window.devicePixelRatio || 1;
+    this._w = width;
+    this._h = height;
+    this.canvas.width  = Math.round(width * dpr);
+    this.canvas.height = Math.round(height * dpr);
+    this.canvas.style.width  = width + 'px';
+    this.canvas.style.height = height + 'px';
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
   /** Clear the entire canvas. */
   clear() {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.clearRect(0, 0, this._w || this.canvas.width, this._h || this.canvas.height);
   }
 
   /**

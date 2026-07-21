@@ -126,7 +126,23 @@
             <button class="sc-btn" id="probe-a-btn">Place Probe A</button>
             <button class="sc-btn" id="probe-b-btn">Place Probe B</button>
             <button class="sc-btn" id="scope-pause-btn">Pause</button>
-            <span class="scope-meta">500 Sa/s · Ch1 = A−B</span>
+
+            <div class="scope-zoom">
+              <span class="zoom-label">V/div</span>
+              <button class="sc-btn zoom-btn" id="vdiv-minus" title="Decrease volts per division">−</button>
+              <span class="zoom-readout" id="vdiv-readout">1 V</span>
+              <button class="sc-btn zoom-btn" id="vdiv-plus" title="Increase volts per division">+</button>
+            </div>
+            <div class="scope-zoom">
+              <span class="zoom-label">s/div</span>
+              <button class="sc-btn zoom-btn" id="sdiv-minus" title="Decrease seconds per division">−</button>
+              <span class="zoom-readout" id="sdiv-readout">0.2 s</span>
+              <button class="sc-btn zoom-btn" id="sdiv-plus" title="Increase seconds per division">+</button>
+            </div>
+            <button class="sc-btn" id="scope-auto-btn" title="Auto-fit vertical scale to the signal">Auto</button>
+            <button class="sc-btn" id="scope-clear-btn" title="Clear the sample buffer">Clear</button>
+
+            <span class="scope-meta" id="scope-meta">500 Sa/s · 1 V/div · 0.2 s/div · Ch1 = A−B</span>
           </div>
           <div id="probe-strip">
             <div id="probe-a-badge" class="probe-badge">
@@ -137,11 +153,14 @@
               <svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3.5" fill="#f5a855"/></svg>
               Probe B: <span id="probe-b-loc">—</span>
             </div>
+            <span class="probe-hint">An unplaced probe reads 0 V (ground reference)</span>
           </div>
           <div id="scope-body">
             <canvas id="scope-canvas"></canvas>
             <div id="scope-stats">
               <div class="sstat"><span class="sstat-label">Ch1 (A−B)</span><span class="sstat-val" id="stat-ch1" style="color:#4de84d">—</span></div>
+              <div class="sstat"><span class="sstat-label">Probe A</span><span class="sstat-val" id="stat-a" style="color:#7ab8f5">—</span></div>
+              <div class="sstat"><span class="sstat-label">Probe B</span><span class="sstat-val" id="stat-b" style="color:#f5a855">—</span></div>
               <div class="sstat"><span class="sstat-label">Vpp</span><span class="sstat-val" id="stat-vpp">—</span></div>
               <div class="sstat"><span class="sstat-label">Vmin</span><span class="sstat-val" id="stat-vmin">—</span></div>
               <div class="sstat"><span class="sstat-label">Vmax</span><span class="sstat-val" id="stat-vmax">—</span></div>

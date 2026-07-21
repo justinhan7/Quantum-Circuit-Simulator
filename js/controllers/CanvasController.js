@@ -59,7 +59,12 @@ class CanvasController {
     this.tool          = toolName;
     this.ghostRotation = 0;
     this._wireDrag     = null;
-    this.placingProbe  = null;
+    if (this.placingProbe) {
+      // Switching tools cancels probe placement — tell the scope UI so the
+      // probe button doesn't stay stuck in its highlighted state.
+      this.placingProbe = null;
+      if (typeof this.cb.onProbeCancelled === 'function') this.cb.onProbeCancelled();
+    }
     this._updateCursor();
     this.redraw();
   }
@@ -193,12 +198,14 @@ class CanvasController {
 
     // ── Probe placement ──
     if (this.placingProbe) {
+      const gx = Math.round(p.x / Constants.CELL);
+      const gy = Math.round(p.y / Constants.CELL);
       if (this.placingProbe === 'a') {
         this.scopeModel.probeA = { ...p };
-        this.cb.onLog(`Probe A placed at (${p.x}, ${p.y})`);
+        this.cb.onLog(`Probe A placed at (${gx}, ${gy})`);
       } else {
         this.scopeModel.probeB = { ...p };
-        this.cb.onLog(`Probe B placed at (${p.x}, ${p.y})`);
+        this.cb.onLog(`Probe B placed at (${gx}, ${gy})`);
       }
       const placed = this.placingProbe;
       this.placingProbe = null;
@@ -223,10 +230,10 @@ class CanvasController {
       }
       this._lastClick = { comp: hit, time: now };
 
-      // Toggle switch
+      // Toggle switch — the MNA solver handles the resulting transient
+      // (capacitor charge/discharge, inductor current decay) physically.
       if (hit?.type === 'switch') {
         hit.closed = !hit.closed;
-        this.circuit.resetCapacitorTimers();
         this.cb.onSwitchToggled(hit);
         this.cb.onLog(`Switch ${hit.closed ? 'CLOSED' : 'OPEN'}`);
       }

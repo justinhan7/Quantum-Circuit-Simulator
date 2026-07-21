@@ -1,6 +1,15 @@
 /**
  * ScopeView.js — renders the oscilloscope waveform onto its canvas.
  * Depends on: Constants
+ *
+ * v2 fixes:
+ *  • Draws all three channels: Probe A (blue), Probe B (orange) faintly,
+ *    and Ch1 = A−B (green) prominently — matching the probe marker colours.
+ *  • Breaks the trace across time gaps (e.g. after a pause/resume) instead
+ *    of drawing a misleading flat connector line.
+ *  • Supports devicePixelRatio for crisp rendering.
+ *  • Clips traces to the plot area so an off-scale signal doesn't scribble
+ *    over the axis labels.
  */
 
 class ScopeView {
@@ -8,11 +17,19 @@ class ScopeView {
   constructor(canvas) {
     this.canvas = canvas;
     this.ctx    = canvas.getContext('2d');
+    this._w = 0;
+    this._h = 0;
   }
 
   resize(width, height) {
-    this.canvas.width  = width;
-    this.canvas.height = height;
+    const dpr = window.devicePixelRatio || 1;
+    this._w = width;
+    this._h = height;
+    this.canvas.width  = Math.round(width * dpr);
+    this.canvas.height = Math.round(height * dpr);
+    this.canvas.style.width  = width + 'px';
+    this.canvas.style.height = height + 'px';
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
   /**
@@ -20,7 +37,9 @@ class ScopeView {
    * @param {ScopeModel} model
    */
   render(model) {
-    const { ctx, canvas: { width: w, height: h } } = this;
+    const ctx = this.ctx;
+    const w = this._w, h = this._h;
+    if (w <= 0 || h <= 0) return;
     const { SCOPE_COLS: cols, SCOPE_ROWS: rows } = Constants;
 
     // Background
@@ -35,14 +54,27 @@ class ScopeView {
     this._drawGrid(ctx, w, h, cols, rows, vdiv, sdiv);
 
     if (model.buffer.length < 2) {
-      ctx.fillStyle  = 'rgba(100,160,100,0.4)';
+      ctx.fillStyle  = 'rgba(100,160,100,0.45)';
       ctx.font       = '11px monospace';
       ctx.textAlign  = 'center';
-      ctx.fillText('Place probes A & B on the circuit, then run', w / 2, h / 2);
+      ctx.fillText('Place Probe A (and optionally B) on the circuit, then Run', w / 2, h / 2);
       return;
     }
 
-    this._drawTrace(ctx, w, h, model.buffer, tFull, vFull);
+    const gap = 4 / Constants.SAMPLE_RATE; // >4 missed samples → break trace
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, 0, w, h);
+    ctx.clip();
+
+    // Faint per-probe channels (only when meaningful: probe actually placed)
+    if (model.probeA) this._drawTrace(ctx, w, h, model.buffer, tFull, vFull, 'a',    'rgba(122,184,245,0.45)', 1, gap);
+    if (model.probeB) this._drawTrace(ctx, w, h, model.buffer, tFull, vFull, 'b',    'rgba(245,168,85,0.45)',  1, gap);
+    // Main channel: A − B
+    this._drawTrace(ctx, w, h, model.buffer, tFull, vFull, 'diff', '#4de84d', 1.5, gap);
+
+    ctx.restore();
 
     if (model.paused) {
       ctx.fillStyle = 'rgba(200,150,0,0.12)';
@@ -79,34 +111,38 @@ class ScopeView {
     ctx.font      = '9px monospace';
     for (let i = 0; i <= rows; i++) {
       const v = (rows / 2 - i) * vdiv;
-      const dec = (v < 1 && v > -1) ? 2 : 1;
+      const abs = Math.abs(v);
+      const str = abs >= 1000 ? (v / 1000).toFixed(1) + 'kV'
+                : abs < 1 && abs > 0 ? v.toFixed(2) + 'V'
+                : v.toFixed(abs >= 10 ? 0 : 1) + 'V';
       ctx.textAlign = 'left';
-      ctx.fillText(v.toFixed(dec) + 'V', 2, i / rows * h + 9);
+      ctx.fillText(str, 2, Math.min(h - 2, Math.max(9, i / rows * h + 9)));
     }
     // Time axis labels
     for (let i = 0; i <= cols; i++) {
       const tl = -(cols - i) * sdiv;
       const str = Math.abs(tl) < 0.001 ? '0' :
         tl.toFixed(Math.abs(tl) < 0.1 ? 3 : Math.abs(tl) < 1 ? 2 : 1) + 's';
-      ctx.textAlign = 'center';
+      ctx.textAlign = i === 0 ? 'left' : i === cols ? 'right' : 'center';
       ctx.fillText(str, i / cols * w, h - 3);
     }
   }
 
-  _drawTrace(ctx, w, h, buffer, tFull, vFull) {
+  _drawTrace(ctx, w, h, buffer, tFull, vFull, field, color, width, gap) {
     const now         = buffer[buffer.length - 1].t;
     const windowStart = now - tFull;
 
     ctx.beginPath();
-    ctx.strokeStyle = '#4de84d';
-    ctx.lineWidth   = 1.5;
-    let first = true;
+    ctx.strokeStyle = color;
+    ctx.lineWidth   = width;
+    let prevT = null;
     for (const s of buffer) {
       if (s.t < windowStart) continue;
       const tx = (s.t - windowStart) / tFull * w;
-      const ty = h / 2 - (s.diff / (vFull / 2)) * (h / 2);
-      first ? ctx.moveTo(tx, ty) : ctx.lineTo(tx, ty);
-      first = false;
+      const ty = h / 2 - (s[field] / (vFull / 2)) * (h / 2);
+      if (prevT === null || s.t - prevT > gap) ctx.moveTo(tx, ty);
+      else ctx.lineTo(tx, ty);
+      prevT = s.t;
     }
     ctx.stroke();
   }

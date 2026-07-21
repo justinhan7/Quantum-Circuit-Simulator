@@ -60,12 +60,16 @@
         sidebarView.renderCompCount(circuitModel.components.length);
       },
       onSwitchToggled: () => {
-        // resetCapacitorTimers is already called inside CanvasController
+        // The MNA solver reacts to the new topology on the next tick —
+        // no manual state reset needed.
       },
       onDoubleClick: comp => {
         modalCtrl.open(comp);
       },
       onProbePlace: () => {
+        scopeCtrl.clearPlacingUI();
+      },
+      onProbeCancelled: () => {
         scopeCtrl.clearPlacingUI();
       },
       onLog: msg => sidebarView.log(msg),
@@ -77,8 +81,17 @@
     canvasCtrl.setTool(toolName);
   });
 
-  // Scope controller
-  const scopeCtrl = new ScopeController(scopeModel, scopeView, canvasCtrl, msg => sidebarView.log(msg));
+  // Scope controller — the last arg resizes the circuit canvases after the
+  // scope panel's open/close transition changes the available height.
+  const scopeCtrl = new ScopeController(
+    scopeModel, scopeView, canvasCtrl,
+    msg => sidebarView.log(msg),
+    () => {
+      const w = wrap.offsetWidth;
+      const h = wrap.offsetHeight;
+      canvasCtrl.resize(w, h);
+    },
+  );
 
   // Modal controller
   const modalCtrl = new ModalController(

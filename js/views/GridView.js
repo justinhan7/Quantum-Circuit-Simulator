@@ -12,13 +12,21 @@ class GridView {
 
   /** Resize canvases to fill their container, then redraw. */
   resize(width, height) {
-    this.canvas.width  = width;
-    this.canvas.height = height;
+    const dpr = window.devicePixelRatio || 1;
+    this._w = width;
+    this._h = height;
+    this.canvas.width  = Math.round(width * dpr);
+    this.canvas.height = Math.round(height * dpr);
+    this.canvas.style.width  = width + 'px';
+    this.canvas.style.height = height + 'px';
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     this.draw();
   }
 
   draw() {
-    const { ctx, canvas: { width: w, height: h } } = this;
+    const ctx = this.ctx;
+    const w = this._w || this.canvas.width;
+    const h = this._h || this.canvas.height;
     const CELL = Constants.CELL;
 
     ctx.clearRect(0, 0, w, h);

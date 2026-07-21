@@ -47,7 +47,7 @@ class EntropyModel {
    */
   async fetch() {
     try {
-      const res = await fetch('https://random.colorado.edu/api/uint8?length=64');
+      const res = await fetch('https://random.colorado.edu/api/uint8?length=512');
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const arr = new Uint8Array(await res.arrayBuffer());
       for (const v of arr) this._buffer.push(v / 255);
